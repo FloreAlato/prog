@@ -33,11 +33,12 @@ int step = 8;
 
 
 
-void black_jack(Elenco *);
+int black_jack(Elenco *);
 void layout_black(int, carta **, int[2], Elenco *, int[2]);
 void stampa_carta(carta *, int, int);
 void recursione(carta *, int, int);
 void stampa_vuota();
+void segnapunti(carta *, int);
 
 
 
@@ -48,12 +49,7 @@ void layout_black(int page_size, carta **mazzi, int dim[2], Elenco *giocatori, i
     int i, j;
 
     // 1 riga occupata
-    printf("--------[STAI GIOCANDO A BLACKJACK]--------");
-
-    // giu di 3 righe
-    for(i = 0; i < 3; i++) {
-        printf("\n");
-    }
+    printf("--------[STAI GIOCANDO A BLACKJACK]--------\n\n");
 
 
     // stampa carte avversario
@@ -83,13 +79,13 @@ void layout_black(int page_size, carta **mazzi, int dim[2], Elenco *giocatori, i
 
 
 
-void black_jack(Elenco *finalisti) {
+int black_jack(Elenco *finalisti) {
 
 
     bool pareggio = false;
     bool continua[2] = {true, true};
     int scelta, i, j, c = 0;
-    int dim[2] = {0, 0};
+    int dim[2] = {2, 2};
     int punti[2] = {0, 0};
 
     int deck_size = 52, segnaposto;
@@ -120,70 +116,96 @@ void black_jack(Elenco *finalisti) {
         exit(-1);
     }
 
-    // partono con dimenzione 1
-    mazzi[0] = (carta *) malloc(sizeof(carta));
-    mazzi[1] = (carta *) malloc(sizeof(carta));
+    // partono con dimenzione 2
+    mazzi[0] = (carta *) malloc(sizeof(carta) * dim[0]);
+    mazzi[1] = (carta *) malloc(sizeof(carta) * dim[1]);
     if(mazzi[0] == NULL || mazzi[1] == NULL) {
         printf("ERRORE! Allocazione fallita!");
         exit(-1);
     }
 
 
+    // rifare da capo (idiota)
+
+    // riempi a caso le prime due carte
+    for(i = 0; i < 2; i++) {
+        for(j = 0; j < 2; j++) {
+            segnaposto = rand_int(0, deck_size - 1);
+            mazzi[i][j] = mazzo[segnaposto];
+            mazzo[segnaposto] = mazzo[deck_size - 1];
+            deck_size--;
+
+            if(mazzi[i][j].valore == 1) {
+                punti[i] += 11;
+            } else if(mazzi[i][j].valore > 10) {
+                punti[i] += 10;
+            } else {
+                punti[i] += mazzi[i][j].valore;
+            }
+        }
+    }
+
+    // COMINCIA LA PARTITA
+
+    // mostra il tavolo
     while(continua[0] == true || continua[1] == true) {
         for(i = 0; i < 2; i++) {
-            // turno 1
+
+            layout_black(25, mazzi, dim, finalisti, punti);
+
+
             if(continua[i]) {
                 if(is_player(finalisti[i])) {
-                    // stampa a schermo la partita
-                    layout_black(25, &mazzi[0], &dim[0], finalisti, punti);
 
-                    printf("[%s]: Vuoi inserire una carta? [si/no]\n[%s]: ", game_name(), print_player(finalisti[i]));
-
+                    // turno giocatore
+                    printf("Vuoi chiedere un'altra carta? (si / no)\n[%s]: ", print_player(finalisti[i]));
                     scelta = si_no("");
                     getchar();
 
-                    if((bool)scelta == false) {
-                        continua[i] = false;
-                    }
-
                 } else {
-                    // vedi un po
-                    // intelligenza artificiale
-                    layout_black(25, &mazzi[0], &dim[0], finalisti, punti);
-                    printf("heh");
 
-                    // proviamo
-                    scelta = 1;
+                    // turno non giocatore
+                    // rivedere
+                    scelta = rand_int(0, 1);
+
+                    if(scelta) {
+                        printf("\n[%s]: Dammene un'altra!", print_player(finalisti[i]));
+                    } else {
+                        printf("\n[%s]: Per me e' tutto!", print_player(finalisti[i]));
+                    }
 
                     getchar();
                 }
 
-                if((bool)scelta == true) {
-                    dim[i]++;
+                // aggiorna in base alla scelta
+                if(scelta) {
+                    dim[i] += 1;
+                    mazzi[i] = (carta *) realloc(mazzi[i], sizeof(carta) * dim[i]);
 
-                    // aumenta le dimenzioni del mazzo solo se serve
-                    if(dim[i] > 1) {
-                        mazzi[i] = (carta *) realloc(mazzi[i], sizeof(carta) * dim[i]);
-                    }
-
-                    // sceglie un numero casuale e aggiorna il mazzo principale
-                    segnaposto = rand_int(0, deck_size);
-
+                    segnaposto = rand_int(0, deck_size - 1);
                     mazzi[i][dim[i] - 1] = mazzo[segnaposto];
-
                     mazzo[segnaposto] = mazzo[deck_size - 1];
-
                     deck_size--;
 
-                    // incrementa il punteggio
+                    // aggiorna il punteggio
                     if(mazzi[i][dim[i] - 1].valore == 1) {
+
+                        // vedere se l'utente vuole
+                        layout_black(25, mazzi, dim, finalisti, punti);
+                        printf("\nChe valore vuoi che abbia questo asso?\n[%s]: ", print_player(finalisti[i]));
+
                         punti[i] += 11;
+                    } else if(mazzi[i][dim[i] - 1].valore > 10) {
+                        punti[i] += 10;
                     } else {
                         punti[i] += mazzi[i][dim[i] - 1].valore;
                     }
 
-                    // controllare il punteggio e interrompere la partita se necessario
+                } else {
+                    continua[i] = false;
                 }
+
+                // controlla il punteggio e interrompi la partita se necessario
             }
         }
     }
@@ -193,7 +215,11 @@ void black_jack(Elenco *finalisti) {
 
 
     free(mazzo);
+    free(mazzi[0]);
+    free(mazzi[1]);
     free(mazzi);
+
+    return 1;
 
 }
 
@@ -270,14 +296,10 @@ void stampa_carta(carta *card, int start, int end) {
 
 void recursione(carta *card, int start, int num) {
 
-    // int step = 8;
-
-    if(num < start + step) {
+    if(num <= start + step) {
 
         // primi num
         stampa_carta(&card[0], start, num);
-
-        // stampa il totale
 
     } else {
 
@@ -297,6 +319,14 @@ void stampa_vuota() {
            "|   ?   |\n"
            "|       |\n"
            " ------- ");
+}
+
+
+
+
+void segnapunti(carta *mazzo, int pos) {
+
+
 }
 
 

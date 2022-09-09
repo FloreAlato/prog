@@ -41,7 +41,7 @@ int main() {
 
 
     getchar();
-    black_jack(fine);
+    int d = black_jack(fine);
     getchar();
 
 
