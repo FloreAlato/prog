@@ -14,6 +14,9 @@
 #include <time.h>
 
 
+#define PAGE_SIZE 25
+
+
 typedef struct {
     int index;
     char nome[64];
@@ -61,8 +64,10 @@ int potenza(int x, int y) {
 
 bool is_numeric(char *num) {
 
+
+
     for(int i = 0; i < strlen(num); i++) {
-        if(num[i] < 48 || num[i] > 57) {
+        if((int)num[i] < 48 || (int)num[i] > 57) {
             return false;
         }
     }

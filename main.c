@@ -11,6 +11,8 @@ void finale(Elenco *);
 
 int main() {
 
+    int i;
+
 
     srand(time(NULL));
 
@@ -38,6 +40,9 @@ int main() {
                 NULL
             }
     };
+
+
+    // calibrazione
 
 
     // scrematura

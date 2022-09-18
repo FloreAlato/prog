@@ -12,4 +12,4 @@ git push -u remote otigin (otigin con la t)
  0 | 0 | 0 
 
 
-Giovanni Maranza | Giocatore 013 
+Ricorda che comincia quello con il numero identificativo minore
