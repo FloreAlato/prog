@@ -1,4 +1,4 @@
-#include "black_jack.h"
+#include "tris.h"
 
 
 
@@ -40,11 +40,6 @@ int main() {
     };
 
 
-    getchar();
-    int d = black_jack(fine);
-    getchar();
-
-
     // scrematura
 
 
@@ -56,6 +51,9 @@ int main() {
 
 
     // finale
+    getchar();
+    int d = tris(fine);
+    getchar();
 
 
 

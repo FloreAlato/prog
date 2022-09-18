@@ -89,6 +89,7 @@ int black_jack(Elenco *finalisti) {
     int punti[2] = {0, 0};
 
     int deck_size = 52, segnaposto;
+    int end = 3;
 
 
     // genera il mazzo
@@ -205,10 +206,17 @@ int black_jack(Elenco *finalisti) {
                     continua[i] = false;
                 }
 
-                // controlla il punteggio e interrompi la partita se necessario
+                // controlla che il punteggio non ecceda il massimo
+                if(punti[i] > 21) {
+                    end = not(i);
+                    continua[i] = false;
+                    continua[not(i)] = false;
+                }
             }
         }
     }
+
+    // punti
 
 
 
