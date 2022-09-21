@@ -48,7 +48,7 @@ void layout_black(int page_size, carta **mazzi, int dim[2], Elenco *giocatori, i
 
     int i, j;
 
-    // 1 riga occupata
+    // 3 righe occupate
     printf("--------[STAI GIOCANDO A BLACKJACK]--------\n\n");
 
 
