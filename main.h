@@ -13,6 +13,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "letters.h"
+
 
 #define PAGE_SIZE 25
 

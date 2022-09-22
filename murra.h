@@ -12,7 +12,7 @@
 
 
 int murra(Elenco *);
-void layout_murra(Elenco *, int);
+void layout_murra(Elenco *, int, int[2]);
 
 
 
@@ -23,22 +23,24 @@ int murra(Elenco *giocatori) {
 
     int i;
 
-    int scelta[2];
+    int scelta[2] = {0, 0};
     int somma[2];
 
     do {
+        scelta[0] = scelta[1] = 0;
+
         // turni
         for(i = 0; i < 2; i++) {
 
-            layout_murra(&giocatori[0], i);
+            layout_murra(&giocatori[0], i, scelta);
 
             if(is_player(giocatori[i])) {
-                printf("[%s]: Inserisci il numero di dita che vuoi buttare e un pronostico della somma", game_name());
-                printf("[%s]: Dita:\n[%s]: ", game_name(), print_player(giocatori[i]));
+                printf("\n[%s]: Inserisci il numero di dita che vuoi buttare e un pronostico della somma", game_name());
+                printf("\n[%s]: Dita:\n[%s]: ", game_name(), print_player(giocatori[i]));
                 scelta[i] = get_int("", 1, 5);
                 getchar();
 
-                printf("[%s]: Somma:\n[%s]: ", game_name(), print_player(giocatori[i]));
+                printf("\n[%s]: Somma:\n[%s]: ", game_name(), print_player(giocatori[i]));
                 somma[i] = get_int("", 2, 10);
                 getchar();
             } else {
@@ -48,8 +50,8 @@ int murra(Elenco *giocatori) {
                 scelta[i] = rand_int(1, 5);
                 somma[i] = rand_int(scelta[i], 10);
 
-                printf("[%s]: Inserisci il numero che vuoi buttare e la somma", game_name());
-                printf("[%s]: Butto %d dita e %d come somma!", print_player(giocatori[i]), scelta[i], somma[i]);
+                printf("\n[%s]: Inserisci il numero che vuoi buttare e la somma", game_name());
+                printf("\n[%s]: Butto %d dita e %d come somma!", print_player(giocatori[i]), scelta[i], somma[i]);
                 getchar();
             }
         }
@@ -57,8 +59,9 @@ int murra(Elenco *giocatori) {
         // controlla pareggio
         if(somma[0] == somma[1] == scelta[0] + scelta[1]) {
             // stampa layout pareggio
+            layout_murra(giocatori, 3, scelta);
 
-            printf("[%s]: Sembra che la partita si sia conclusa in pareggio! Riproviamo!", game_name());
+            printf("\n[%s]: Sembra che la partita si sia conclusa in pareggio! Riproviamo!", game_name());
             getchar();
         } else if(somma[0] == scelta[0] + scelta[1]) {
             // stampa layout vittoria primo giocatore
@@ -72,8 +75,9 @@ int murra(Elenco *giocatori) {
             return 1;
         } else {
             // stampa layout fiasco
+            layout_murra(giocatori, 3, scelta);
 
-            printf("[%s]: Nessuno dei due ha avuto fortuna! Riproviamo!", game_name());
+            printf("\n[%s]: Nessuno dei due ha avuto fortuna! Riproviamo!", game_name());
             getchar();
         }
 
@@ -87,20 +91,26 @@ int murra(Elenco *giocatori) {
 
 
 
-void layout_murra(Elenco *giocatori, int turno) {
+void layout_murra(Elenco *giocatori, int turno, int numeri[2]) {
 
     // 3 righe occupate
     printf("--------[STAI GIOCANDO A MURRA]--------\n\n");
 
-    // stampa le mani
+    // stampa le dita
+    printf("[%s] HA BUTTATO:       [%s] HA BUTTATO:\n", print_player(giocatori[0]), print_player(giocatori[1]));
+    print_num(numeri, 2);
+
 
 
     // 5 righe occupate
     if(turno >= 2) {
         //
-        
+        printf("\n\n\nVittoria!!!\n\n\n\n");
+
     } else {
+        printf("\n\n");
         stampa_turno(&giocatori[0], 2, turno);
     }
+    printf("\n\n\n");
 
 }

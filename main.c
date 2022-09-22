@@ -57,7 +57,7 @@ int main() {
 
     // finale
     getchar();
-    int d = tris(fine);
+    int d = murra(fine);
     getchar();
 
 
